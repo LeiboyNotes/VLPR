@@ -28,4 +28,4 @@ private:
 
 
 
-#endif // PLATELOCATE_H
+#endif // SVMPREDICT_H

@@ -1,26 +1,31 @@
 
 #include "PlateRecognize.h"
 
-PlateRecognize::PlateRecognize(const char* svm_model) {
+PlateRecognize::PlateRecognize(const char* svm_model, const char* ann_model, const char* ann_zh_model) {
 
 	sobelLocate = new SobelLocate();
 	colorLocate = new ColorLocate();
 	svmPredict = new SvmPredict(svm_model);
+	annPredict = new AnnPredict(ann_model, ann_zh_model);
 }
 PlateRecognize::~PlateRecognize() {
 
 	if (sobelLocate) {
 		delete sobelLocate;
 		sobelLocate = 0;
-}
+	}
 	if (colorLocate) {
 		delete colorLocate;
 		colorLocate = 0;
-}
+	}
 	if (svmPredict) {
 		delete svmPredict;
 		svmPredict = 0;
-}
+	}
+	if (annPredict) {
+		delete annPredict;
+		annPredict = 0;
+	}
 }
 
 /*
@@ -50,13 +55,22 @@ String PlateRecognize::recognize(Mat src) {
 	for (size_t i = 0; i < plates.size(); i++)
 	{
 		sprintf(windowName, "%zd 候选车牌", i);
-		imshow(windowName, plates[i]);
+		//imshow(windowName, plates[i]);
 		//waitKey();
 	}
-	
+
 	//候选车牌里分两类：车牌和非车牌
-	//对候选车牌进行精选，   SVM：分类
+	//2、对候选车牌进行精选，   SVM：分类
 	Mat plate;
-	int index = svmPredict->doPredict(plates,plate);
-	return string("123");
+	//找到最可能是车牌的图片
+	int index = svmPredict->doPredict(plates, plate);
+	for (Mat m : plates) {
+		m.release();
+	}
+	
+	//获取到一个最可能是车牌的图片
+	//3、对车牌进行字符识别
+	String str_plate = annPredict->doPredict(plate);
+	plate.release();
+	return str_plate;
 }

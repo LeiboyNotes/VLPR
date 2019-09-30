@@ -78,7 +78,7 @@ void ColorLocate::locate(Mat src, vector<Mat>& dst_plates)
 	Mat close;
 	Mat element = getStructuringElement(MORPH_RECT, Size(17, 3));
 	morphologyEx(shold, close, MORPH_CLOSE, element);
-	imshow("±Õ²Ù×÷", close);
+	//imshow("±Õ²Ù×÷", close);
 
 	//ÕÒÂÖÀª
 	vector<vector<Point>> contours;
